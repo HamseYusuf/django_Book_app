@@ -2,9 +2,40 @@
 
 {% block content %}
 
-<h1> Detail of {{ book.title }}</h1>
-<p>{{ book.author }}</p>
-<a href="{% url 'book_update' book.id %}">Update </a>
-<a href="{% url 'book_delete' book.id %}">Delete </a>
+<div class="container">
+    <div class="row flex justify-content-center m-4">
+      <div class="col-8">
+        <div class="card p-4 border border-3 bg-light">
+            <div class="card-title">
+                <div class="display-6 text-center text-capitalize fw-bold">  {{book.title}}</div>
+            </div>
+            <div class="card-body m-3">
+                <img src="{{ book.cover_page.url }}" width="350" height="350" alt="">
+               <div class="m-2 p-3">
+                <div class="">
+                    <strong>Author: </strong>  {{book.author}}
+                </div>
+                <div>
+                    <strong>Published Date: </strong>  {{book.publication_date}}
+                </div>
+                <div>
+                    <strong>Price: </strong> $ {{book.price}}
+                </div>
+               </div>
+               {% if request.user == book.author %}
+
+               <a class="btn btn-outline-secondary" href="{% url 'book_update' book.id%}">Update</a>
+               <a class="btn btn-outline-danger" href="{% url 'book_delete' book.id%}">Delete</a>
+
+               {% else %}
+
+               <div class="text-danger">Only the owner can update </div>
+
+               {% endif %}
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
 
 {% endblock %}

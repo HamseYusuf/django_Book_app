@@ -1,17 +1,18 @@
 from django.urls import path
-from .views import home , about , contact , login , email , signup , post_list , create_book , book_detail , book_update , book_delete
+from .views import (
+    HomeView, CustomLoginView, CustomLogoutView, SignupView,
+    BookCreateView, BookDetailView, BookUpdateView, BookDeleteView,
+    PostListView
+)
 
 urlpatterns = [
-    path('' , home , name="home"),
-    path('about/' , about , name="about"),
-    path('contact/' , contact , name="contact"),
-    path('login/', login, name="login"),
-    path('email/', email, name="email"),
-    path('signup/', signup, name="signup"),
-    path('posts' , post_list , name="posts"),
-    path('create' , create_book , name="create"),
-    path('book/<int:pk>/' , book_detail , name="book_detail"),
-    path('update/<int:pk>/' , book_update , name="book_update"),
-    path('delete/<int:pk>/' , book_delete , name="book_delete")
-
+    path('', HomeView.as_view(), name='home'),
+    path('login/', CustomLoginView.as_view(), name='login'),
+    path('logout/', CustomLogoutView.as_view(), name='logout'),
+    path('signup/', SignupView.as_view(), name='signup'),
+    path('create/', BookCreateView.as_view(), name='create'),
+    path('book/<int:pk>/', BookDetailView.as_view(), name='book_detail'),
+    path('book/<int:pk>/update/', BookUpdateView.as_view(), name='book_update'),
+    path('book/<int:pk>/delete/', BookDeleteView.as_view(), name='book_delete'),
+    path('posts/', PostListView.as_view(), name='post'),
 ]

@@ -2,10 +2,25 @@
 
 {% block content %}
 
-<form method="post">
-    {% csrf_token%}
-    <label >Are your sure you want to Delete</label>
-    <input type="submit" value = "Delete">
-</form>
+<div class="container">
+    <div class="row flex justify-content-center mt-5 ">
+        <div class="col-8">
+            <div class="card bg-light p-3  border border-4 ">
+                <div class="card-body">
+
+                    <div class="text-center">
+                        <div class="h3 ">Are you Sure You want to delete  book titled <strong>{{book.title}}</strong></div>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="submit" class="btn btn-lg btn-danger m-2 p-2" value="Delete">
+                        </form>
+                    </div>
+                    
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

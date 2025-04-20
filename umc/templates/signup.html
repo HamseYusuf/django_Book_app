@@ -1,11 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>signup page</h1>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+<label class="form-label text-center display-4 " for="">Signup</label>
+
+<div class="container">
+    <div class="row flex justify-content-center">
+        <div class="col-6">
+            <form method="post" class="form-group"  enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form |crispy }}
+                <input type="submit" value="Submit" class="btn btn-sm btn-secondary form-control">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

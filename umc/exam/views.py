@@ -1,76 +1,87 @@
-from django.shortcuts import render , redirect
-from django.http import HttpResponse
-from.models import Book , Post
-from.forms import BookForm
+from django.shortcuts import redirect , render
+from django.urls import reverse_lazy
+from django.views import View
+from django.views.generic import (
+    TemplateView, ListView, DetailView,
+    CreateView, UpdateView, DeleteView, FormView
+)
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import login , logout
+from .models import Book, Post
+from .forms import BookForm
 
 
-def create_book(request):
-    form = BookForm(request.POST)
-    if form.is_valid():
+class HomeView(LoginRequiredMixin,ListView):
+    model = Book
+    template_name = 'home.html'
+    context_object_name = 'books'
+
+
+
+class CustomLoginView(LoginView):
+    form_class = AuthenticationForm
+    template_name = 'login.html'
+
+    def form_valid(self, form):
+        login(self.request, form.get_user())
+        print(form.get_user())
+        return redirect('home')
+
+
+class CustomLogoutView(View):
+    def post(self, request, *args, **kwargs):
+        logout(request)
+        return redirect('login')
+
+    def get(self, request, *args, **kwargs):
+        return render(request, 'logout.html')
+
+
+class SignupView(FormView):
+    template_name = 'signup.html'
+    form_class = UserCreationForm
+    success_url = reverse_lazy('home')
+
+    def form_valid(self, form):
         form.save()
-        return redirect('home')
-
-    context = {
-        'form' : form
-    }
-    return render(request , 'create.html' , context)
-
-
-def book_detail(request , pk):
-    book = Book.objects.get(pk = pk)
-    context = {
-        'book' : book
-    }
-    return render(request , 'book_detail.html' , context)
-
-
-def book_update(request , pk):
-    book = Book.objects.get(pk=pk)
-    if request.method == 'POST':
-        book.title = request.POST.get('title')
-        book.author = request.POST.get('author')
-        book.publication_date = request.POST.get('date')
-        book.price = request.POST.get('price')
-        book.save()
-        return redirect('home')
-    context = {
-        'book' : book
-    }
-    return render(request , 'book_update.html' , context)
-
-def book_delete(request , pk):
-    book = Book.objects.get(pk = pk)
-    if request.method == 'POST':
-        book.delete()
-        return redirect('home')
-    return render(request , 'book_delete.html')
-
-def post_list(request):
-    posts = Post.objects.all()
-    context = {
-        'posts' : posts
-    }
-    return render(request , 'post.html', context)
+        return super().form_valid(form)
 
 
 
-def home(request):
-    books = Book.objects.all()
-    context = {
-        'books' : books
-    }
-    return render(request , 'home.html' , context)
+class BookCreateView(LoginRequiredMixin,CreateView):
+    model = Book
+    form_class = BookForm
+    template_name = 'create.html'
+    success_url = reverse_lazy('home')
 
-def about(request):
-    return render(request , 'about.html')
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
-def contact(request):
-    return render(request , 'contact.html')
 
-def login(request):
-    return render(request, 'login.html')
-def email(request):
-    return render(request, 'email.html')
+class BookDetailView(LoginRequiredMixin,DetailView):
+    model = Book
+    template_name = 'book_detail.html'
+    context_object_name = 'book'
 
-def signup(request):
-    return render(request, 'signup.html')
+
+class BookUpdateView(LoginRequiredMixin,UpdateView):
+    model = Book
+    form_class = BookForm
+    template_name = 'book_update.html'
+    success_url = reverse_lazy('home')
+
+
+class BookDeleteView(LoginRequiredMixin,DeleteView):
+    model = Book
+    template_name = 'book_delete.html'
+    success_url = reverse_lazy('home')
+
+
+
+class PostListView(LoginRequiredMixin,ListView):
+    model = Post
+    template_name = 'post.html'
+    context_object_name = 'posts'
